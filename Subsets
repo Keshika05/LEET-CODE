@@ -1,0 +1,20 @@
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        result = []
+        
+        def backtrack(start_idx: int, current_subset: List[int]):
+            # Append a copy of the current subset to the result
+            result.append(list(current_subset))
+            
+            for i in range(start_idx, len(nums)):
+                # Action: Include the number
+                current_subset.append(nums[i])
+                
+                # Recurse: Move to the next index
+                backtrack(i + 1, current_subset)
+                
+                # Backtrack: Remove the number
+                current_subset.pop()
+                
+        backtrack(0, [])
+        return result
