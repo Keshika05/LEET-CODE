@@ -1,0 +1,51 @@
+from collections import Counter
+
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        R, C = len(board), len(board[0])
+        
+        # --- PRUNING 1: Quick frequency check ---
+        # If the grid doesn't have enough characters to form the word, return False immediately
+        board_counts = Counter(char for row in board for char in row)
+        word_counts = Counter(word)
+        for char, count in word_counts.items():
+            if board_counts[char] < count:
+                return False
+                
+        # --- PRUNING 2: Directional optimization ---
+        # If the count of the word's starting character is higher than its ending character,
+        # reverse the word to reduce the number of starting DFS branches.
+        if board_counts[word[0]] > board_counts[word[-1]]:
+            word = word[::-1]
+            
+        def dfs(r: int, c: int, index: int) -> bool:
+            # Base case: All characters in the word have been matched
+            if index == len(word):
+                return True
+                
+            # Check boundary conditions and matching character
+            if r < 0 or r >= R or c < 0 or c >= C or board[r][c] != word[index]:
+                return False
+                
+            # Action: Mark the current cell as visited
+            temp = board[r][c]
+            board[r][c] = "#"
+            
+            # Recurse: Explore all 4 adjacent directions
+            found = (dfs(r + 1, c, index + 1) or 
+                     dfs(r - 1, c, index + 1) or 
+                     dfs(r, c + 1, index + 1) or 
+                     dfs(r, c - 1, index + 1))
+            
+            # Backtrack: Restore the cell's original character
+            board[r][c] = temp
+            
+            return found
+            
+        # Try to start DFS from every cell in the grid
+        for r in range(R):
+            for c in range(C):
+                if board[r][c] == word[0] and dfs(r, c, 0):
+                    return True
+                    
+        return False
