@@ -1,0 +1,26 @@
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        result = []
+        
+        def backtrack(start_idx: int, current_combination: List[int]):
+            # Base case: if the combination is of the required length k
+            if len(current_combination) == k:
+                result.append(list(current_combination))
+                return
+            
+            # Pruning optimization: 
+            # There's no need to iterate if there aren't enough remaining numbers 
+            # to complete the combination of size k.
+            needed = k - len(current_combination)
+            for i in range(start_idx, n - needed + 2):
+                # Action: Add the number to the current combination
+                current_combination.append(i)
+                
+                # Recurse: Move to the next number
+                backtrack(i + 1, current_combination)
+                
+                # Backtrack: Remove the number to explore other combinations
+                current_combination.pop()
+                
+        backtrack(1, [])
+        return result
