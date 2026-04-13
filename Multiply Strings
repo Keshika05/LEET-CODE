@@ -1,0 +1,32 @@
+class Solution:
+    def multiply(self, num1: str, num2: str) -> str:
+        # Edge case: if either number is "0", the result is "0"
+        if num1 == "0" or num2 == "0":
+            return "0"
+            
+        # The maximum possible length of the product of num1 and num2 is len(num1) + len(num2)
+        m, n = len(num1), len(num2)
+        result = [0] * (m + n)
+        
+        # Multiply each digit and store in the result array
+        for i in range(m - 1, -1, -1):
+            for j in range(n - 1, -1, -1):
+                # Convert characters to digits
+                mul = (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0'))
+                
+                # Positions in the result array
+                p1 = i + j
+                p2 = i + j + 1
+                
+                # Add to the current position and calculate carry
+                total_sum = mul + result[p2]
+                
+                result[p2] = total_sum % 10
+                result[p1] += total_sum // 10
+                
+        # Convert result array to string, removing any leading zeros
+        start_idx = 0
+        while start_idx < len(result) and result[start_idx] == 0:
+            start_idx += 1
+            
+        return "".join(map(str, result[start_idx:]))
