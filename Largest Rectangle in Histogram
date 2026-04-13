@@ -1,0 +1,28 @@
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        stack = [] # Stores indices of the bars
+        max_area = 0
+        
+        # Append a 0 to the end to ensure all bars are processed out of the stack
+        heights.append(0)
+        
+        for i, h in enumerate(heights):
+            # Maintain a monotonic increasing stack
+            while stack and heights[stack[-1]] > h:
+                # The bar at the top of the stack is the shortest bar in the current window
+                height_idx = stack.pop()
+                height = heights[height_idx]
+                
+                # If stack is empty, it means the popped bar was the shortest seen so far.
+                # The width spans from the beginning (index 0) to index 'i'.
+                # Otherwise, width spans between current index 'i' and the new top of the stack.
+                width = i if not stack else i - stack[-1] - 1
+                
+                max_area = max(max_area, height * width)
+                
+            stack.append(i)
+            
+        # Revert the heights array to its original state (good practice)
+        heights.pop()
+        
+        return max_area
